@@ -7,14 +7,16 @@ public class Player : MonoBehaviour
     public float speed;
     float hAxis;
     float vAxis;
-
+    bool wDown;
 
     Vector3 moveVec;
 
     Animator anim;
 
-    void Start()
+
+    void Awake()
     {
+        anim = GetComponentInChildren<Animator>();
 
 
     }
@@ -23,10 +25,20 @@ public class Player : MonoBehaviour
     {
         hAxis = Input.GetAxisRaw("Horizontal");
         vAxis = Input.GetAxisRaw("Vertical");
+        wDown = Input.GetButton("Walk");
+
 
         moveVec = new Vector3(hAxis, 0, vAxis).normalized;
 
+        transform.position += moveVec * speed * (wDown ? 0.3f : 1f) * Time.deltaTime;
+
         transform.position += moveVec * speed * Time.deltaTime;
+
+        anim.SetBool("isRun", moveVec != Vector3.zero);
+        anim.SetBool("isWalk", wDown);
+
+        // LookAt() 지정된 벡터로 회전시켜주는 함수
+        transform.LookAt(transform.position + moveVec);
 
     }
 }
